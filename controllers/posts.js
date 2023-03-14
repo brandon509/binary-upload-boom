@@ -1,5 +1,6 @@
 const cloudinary = require("../middleware/cloudinary");
 const Post = require("../models/Post");
+const User = require("../models/User");
 
 module.exports = {
   getProfile: async (req, res) => {
@@ -13,6 +14,10 @@ module.exports = {
   getFeed: async (req, res) => {
     try {
       const posts = await Post.find().sort({ createdAt: "desc" }).lean();
+      for(let i = 0; i< posts.length; i++){
+        let user = await User.findById(posts[i].user)
+        posts[i].userName = user.userName
+      }
       res.render("feed.ejs", { posts: posts });
     } catch (err) {
       console.log(err);
@@ -21,7 +26,8 @@ module.exports = {
   getPost: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id);
-      res.render("post.ejs", { post: post, user: req.user });
+      const user = await User.findById(post.user)
+      res.render("post.ejs", { post: post, user: req.user, postUser: user });
     } catch (err) {
       console.log(err);
     }
@@ -47,13 +53,21 @@ module.exports = {
   },
   likePost: async (req, res) => {
     try {
-      await Post.findOneAndUpdate(
-        { _id: req.params.id },
-        {
+      let post = await Post.findById({ _id: req.params.id })
+      if(post.likedBy.includes(req.user.id)){
+        await post.updateOne({
+          $inc: { likes: -1},
+          $pull: { likedBy: req.user.id},
+        })
+        console.log("Likes -1");
+      }
+      else{
+        await post.updateOne({
           $inc: { likes: 1 },
-        }
-      );
-      console.log("Likes +1");
+          $push: { likedBy: req.user.id}
+        })
+        console.log("Likes +1");
+      }
       res.redirect(`/post/${req.params.id}`);
     } catch (err) {
       console.log(err);
