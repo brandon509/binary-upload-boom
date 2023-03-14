@@ -17,4 +17,4 @@
 
 # Run
 
-`npm run dev`
+`npm start`
