@@ -28,7 +28,13 @@ module.exports = {
     try {
       const post = await Post.findById(req.params.id);
       const user = await User.findById(post.user)
-      res.render("post.ejs", { post: post, user: req.user, postUser: user });
+      const allUsers = await User.find()
+      const likedByUsers = []
+      post.likedBy.forEach(x => {
+          let index = allUsers.findIndex(el => el._id == x)
+          likedByUsers.push(allUsers[index].userName)
+        })
+      res.render("post.ejs", { post: post, user: req.user, postUser: user, likedByUsers: likedByUsers });
     } catch (err) {
       console.log(err);
     }

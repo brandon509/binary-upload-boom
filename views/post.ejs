@@ -18,12 +18,14 @@
             <button class="btn btn-primary fa fa-heart" type="submit"></button>
           <% } %>
         </form>
-        <h3 class="col-3">Likes: <%= post.likes %></h3>
+        <% if(post.likes > 0){ %>
+          <h3 class="col-5 fs-6">Liked by <strong> <%= likedByUsers[likedByUsers.length-1]%> <%if(post.likes > 1){%> </strong> and <strong><%= post.likes - 1 %> </strong> <%if(post.likes == 2){%> other <% }else{%> others <% } %> <% } %></h3>
+        <% } %>
         <%if(post.user == user.id){ %>
         <form
           action="/post/deletePost/<%= post.id %>?_method=DELETE"
           method="POST"
-          class="col-3"
+          class="col-2"
         >
           <button class="btn btn-primary fa fa-trash" type="submit"></button>
         </form>
