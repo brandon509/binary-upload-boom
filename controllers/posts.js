@@ -1,4 +1,5 @@
 const cloudinary = require("../middleware/cloudinary");
+const Comments = require("../models/Comments");
 const Post = require("../models/Post");
 const User = require("../models/User");
 
@@ -29,12 +30,13 @@ module.exports = {
       const post = await Post.findById(req.params.id);
       const user = await User.findById(post.user)
       const allUsers = await User.find()
+      const comments = await Comments.find({post: req.params.id}).sort({ createdAt: "desc" }).lean()
       const likedByUsers = []
       post.likedBy.forEach(x => {
           let index = allUsers.findIndex(el => el._id == x)
           likedByUsers.push(allUsers[index].userName)
         })
-      res.render("post.ejs", { post: post, user: req.user, postUser: user, likedByUsers: likedByUsers });
+      res.render("post.ejs", { post: post, user: req.user, postUser: user, likedByUsers: likedByUsers, comments: comments });
     } catch (err) {
       console.log(err);
     }
