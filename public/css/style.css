@@ -1,0 +1,15 @@
+p{
+    font-weight: normal
+}
+
+a{
+    text-decoration: none;
+}
+
+li{
+    font-weight: normal;
+}
+
+.comments{
+    list-style-type: none;
+}

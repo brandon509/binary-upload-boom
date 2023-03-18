@@ -8,7 +8,6 @@ module.exports = {
                 user: req.user.id,
                 post: req.params.postId
             })
-
             res.redirect(`/post/${req.params.postId}`)
         }
         catch(err){
