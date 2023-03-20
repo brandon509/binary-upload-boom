@@ -16,6 +16,14 @@ module.exports = {
 
     },
     deleteComment: async (req, res) => {
-
+        try{
+            let comment = await Comments.findById({_id: req.params.commentId})
+            await Comments.deleteOne({_id: req.params.commentId})
+            console.log("Deleted Comments");
+            res.redirect(`/post/${comment.post}`);
+        }
+        catch(err){
+            console.log(err)
+        }
     }
 }

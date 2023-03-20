@@ -36,11 +36,15 @@ module.exports = {
           let index = allUsers.findIndex(el => el._id == x)
           likedByUsers.push(allUsers[index].userName)
         })
+      
+      let currentDate = new Date(Date.now())
       for(let i = 0; i< comments.length; i++){
         let user = await User.findById(comments[i].user)
         comments[i].userName = user.userName
+
+        let dateDiff = Math.floor((currentDate - comments[i].createdAt)/84400000)
+        comments[i].dateDiff = dateDiff
       }
-      console.log(comments[0].createdAt)
       res.render("post.ejs", { post: post, user: req.user, postUser: user, likedByUsers: likedByUsers, comments: comments });
     } catch (err) {
       console.log(err);

@@ -13,3 +13,13 @@ li{
 .comments{
     list-style-type: none;
 }
+
+.dateDiff{
+    display: inline;
+    color: gray;
+    font-size: 13px;
+}
+
+.commentDelete{
+    font-size: 6px;
+}
