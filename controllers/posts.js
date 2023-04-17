@@ -15,11 +15,7 @@ module.exports = {
   },
   getFeed: async (req, res) => {
     try {
-      const posts = await Post.find().sort({ createdAt: "desc" }).lean();
-      for(let i = 0; i< posts.length; i++){
-        let user = await User.findById(posts[i].user)
-        posts[i].userName = user.userName
-      }
+      const posts = await Post.find().sort({ createdAt: "desc" }).lean().populate('user')
       res.render("feed.ejs", { posts: posts, loggedUser: req.user });
     } catch (err) {
       console.log(err);
@@ -27,8 +23,8 @@ module.exports = {
   },
   getPost: async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id);
-      const user = await User.findById(post.user)
+      const post = await Post.findById(req.params.id).populate('user')
+      console.log(post)
       const allUsers = await User.find()
       const comments = await Comments.find({post: req.params.id}).sort({ createdAt: "desc" }).lean()
       const likedByUsers = []
@@ -45,16 +41,14 @@ module.exports = {
         let dateDiff = Math.floor((currentDate - comments[i].createdAt)/84400000)
         comments[i].dateDiff = dateDiff
       }
-      res.render("post.ejs", { post: post, user: req.user, postUser: user, likedByUsers: likedByUsers, comments: comments });
+      res.render("post.ejs", { post: post, user: req.user, likedByUsers: likedByUsers, comments: comments });
     } catch (err) {
       console.log(err);
     }
   },
   createPost: async (req, res) => {
     try {
-      // Upload image to cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
-
+      const result = await cloudinary.uploader.upload(req.file.path)
       await Post.create({
         title: req.body.title,
         image: result.secure_url,
@@ -93,11 +87,8 @@ module.exports = {
   },
   deletePost: async (req, res) => {
     try {
-      // Find post by id
       let post = await Post.findById({ _id: req.params.id });
-      // Delete image from cloudinary
       await cloudinary.uploader.destroy(post.cloudinaryId);
-      // Delete post from db
       await Post.remove({ _id: req.params.id });
       await Comments.deleteMany({post: req.params.id})
       console.log("Deleted Post");

@@ -2,8 +2,8 @@
 <div class="container">
   <div class="row justify-content-center mt-5">
     <div class="col-6">
-      <a href="/profile/<%= post.user%>">
-        <h2><%= postUser.userName %></h2>
+      <a href="/profile/<%= post.user._id%>">
+        <h2><%= post.user.userName %></h2>
       </a>
       <img class="img-fluid" src="<%= post.image%>" />
       <div class="row justify-content-between">
@@ -18,7 +18,7 @@
             <button class="btn btn-primary fa fa-heart mt-1" type="submit"></button>
           <% } %>
         </form>
-        <%if(post.user == user.id){ %>
+        <%if(post.user._id == user.id){ %>
         <form
           action="/post/deletePost/<%= post.id %>?_method=DELETE"
           method="POST"
@@ -32,7 +32,7 @@
         <h3 class="col-5 fs-6 mt-2">Liked by <strong> <%= likedByUsers[likedByUsers.length-1]%> <%if(post.likes > 1){%> </strong> and <strong><%= post.likes - 1 %> </strong> <%if(post.likes == 2){%> other <% }else{%> others <% } %> <% } %></h3>
       <% } %>
       <div class="mt-4">
-        <p><strong><%=`${postUser.userName} `%></strong><%=post.caption%></p>
+        <p><strong><%=`${post.user.userName} `%></strong><%=post.caption%></p>
       </div>
       <ul>
         <%for(let i=0; i<comments.length;i++){%>
